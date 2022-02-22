@@ -8,31 +8,12 @@ export const ScheduleForm = ({
   defaultDate: string | undefined
   dismiss: () => void
 }) => {
-  const transition = useTransition()
-  const busy = transition.state !== "idle"
   return (
     <Form method="post">
       <input type="date" name="date" defaultValue={defaultDate} />
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button className="button button-dark" type="submit">
-          {busy ? (
-            <span
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              <Spinner
-                color="var(--color-light-text)"
-                style={{ borderLeftColor: "#fff" }}
-              />{" "}
-              scheduling
-            </span>
-          ) : (
-            "schedule"
-          )}
+          schedule
         </button>
         <button
           type="button"

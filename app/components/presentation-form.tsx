@@ -24,8 +24,6 @@ export default function PresentationForm({
   users: User[]
   onDismiss: () => void
 }) {
-  const transition = useTransition()
-  const busy = transition.state !== "idle"
   return (
     <Form method="post">
       <input
@@ -71,29 +69,11 @@ export default function PresentationForm({
       </label>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button
-          disabled={busy}
           type="submit"
           className="button button-dark"
           style={{ width: 130 }}
         >
-          {busy ? (
-            <span
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              <Spinner
-                color="var(--color-light-text)"
-                style={{ borderLeftColor: "#fff" }}
-              />{" "}
-              submitting
-            </span>
-          ) : (
-            "submit"
-          )}
+          Submit
         </button>
         <button
           type="button"
