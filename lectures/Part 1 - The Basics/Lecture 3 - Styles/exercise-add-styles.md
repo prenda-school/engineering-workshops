@@ -4,6 +4,10 @@ Add styles to the `/presentation` route by bringing in the styles from `app/styl
 2. `import` the stylesheet from `app/styles/presentation.css`. Hint: the default import is a url.
 3. `export` a `links` function that takes no arguments and returns an array of links objects.
 
+Hints:
+
+- Add `className="presentation-table"` to the table to get some styling.
+
 ```typescript
 export function links(): LinkObject[]
 ```
