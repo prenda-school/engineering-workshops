@@ -4,7 +4,9 @@ import {
   Link,
   LinksFunction,
   LoaderFunction,
+  useFetcher,
   useLoaderData,
+  useTransition,
 } from "remix"
 import stylesUrl from "~/styles/presentation.css"
 import { getUser } from "~/utils/users.server"
@@ -15,6 +17,7 @@ import {
 } from "~/utils/presentations.server"
 import { AugmentedPresentation } from "~/types"
 import { likePresentation, unlikePresentation } from "~/utils/votes"
+import { Spinner } from "~/components/spinner"
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }]
@@ -67,7 +70,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function PresentationsTable() {
   const { presentations, user } =
     useLoaderData<{ user: User; presentations: AugmentedPresentation[] }>()
-
   return (
     <div className="container">
       <Link to="new" className="button button-light create-topic-button">
@@ -125,25 +127,45 @@ const VoteButton = ({
   presentation: AugmentedPresentation
 }) => {
   const alreadyLikes = presentation.votes?.find((v) => v.userId === userId)
+  // const fetcher = useFetcher()
+  const transition = useTransition()
+  const isLiking = transition.state !== "idle"
+  // transition.submission?.formData.get("presentationId") === presentation.id
   return (
     <Form method="post">
       <input type="hidden" name="userId" value={userId} />
       <input type="hidden" name="presentationId" value={presentation.id} />
-      <button
-        name="actionType"
-        value={alreadyLikes ? "unlike" : "like"}
-        type="submit"
-        className="button button-light"
-      >
-        {alreadyLikes ? "No longer interested" : "I'm Interested"}
-      </button>
+      {isLiking ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Spinner />
+        </div>
+      ) : (
+        <button
+          name="actionType"
+          value={alreadyLikes ? "unlike" : "like"}
+          type="submit"
+          className="button button-light"
+        >
+          {alreadyLikes ? "No longer interested" : "I'm Interested"}
+        </button>
+      )}
     </Form>
   )
 }
 
 const DeleteButton = ({ presentationId }: { presentationId: string }) => {
+  const fetcher = useFetcher()
+  const isDeleting =
+    fetcher.submission?.formData.get("presentationId") === presentationId
+
   return (
-    <Form method="post">
+    <fetcher.Form method="post">
       <input type="hidden" name="presentationId" value={presentationId} />
       <button
         name="actionType"
@@ -153,8 +175,8 @@ const DeleteButton = ({ presentationId }: { presentationId: string }) => {
         aria-label="delete"
         style={{ borderRadius: "50%", width: 24, height: 24, padding: 0 }}
       >
-        &times;
+        {isDeleting ? <Spinner /> : "×"}
       </button>
-    </Form>
+    </fetcher.Form>
   )
 }
