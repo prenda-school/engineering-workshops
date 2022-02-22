@@ -40,11 +40,10 @@ export default function App() {
         <Links />
       </head>
       <body>
-        {user && <Header user={user} />}
-        <div className={user ? "app-container" : ""}>
+        <Header user={user} />
+        <div className="app-container">
           <Outlet />
         </div>
-
         <ScrollRestoration />
         {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>
@@ -72,6 +71,11 @@ const Header = ({ user }: { user: User | null }) => {
       {user && (
         <div className="user-info">
           <div className="user-name">{`Hi ${user.firstname} ${user.lastname}`}</div>
+          <Form id="logout-form" action="/logout" method="post">
+            <button type="submit" className="button button-dark">
+              Logout
+            </button>
+          </Form>
         </div>
       )}
     </header>

@@ -1,21 +1,36 @@
-import { Links, LiveReload, Meta, Outlet, ScrollRestoration } from "remix"
+import {
+  Form,
+  Links,
+  LiveReload,
+  LoaderFunction,
+  Meta,
+  Outlet,
+  ScrollRestoration,
+  useLoaderData,
+} from "remix"
 import type { MetaFunction, LinksFunction } from "remix"
-import globalStylesUrl from "~/styles/global.css"
-import headerStylesUrl from "~/styles/header.css"
-import spinnerStylesUrl from "~/styles/spinner.css"
+import globalStylesUrl from "./styles/global.css"
+import headerStylesUrl from "./styles/header.css"
+import { getUser } from "~/utils/users.server"
+import { User } from "@prisma/client"
 import { NavLink } from "react-router-dom"
 
 export const meta: MetaFunction = () => {
-  return { title: "New Remix App" }
+  return { title: "Engineering Workshops" }
 }
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: globalStylesUrl },
   { rel: "stylesheet", href: headerStylesUrl },
-  { rel: "stylesheet", href: spinnerStylesUrl },
 ]
 
+export const loader: LoaderFunction = async ({ request }) => {
+  const user = await getUser(request)
+  return { user }
+}
+
 export default function App() {
+  const { user } = useLoaderData<{ user: User | null }>()
   return (
     <html lang="en">
       <head>
@@ -25,7 +40,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Header />
+        <Header user={user} />
         <div className="app-container">
           <Outlet />
         </div>
@@ -36,7 +51,7 @@ export default function App() {
   )
 }
 
-const Header = () => {
+const Header = ({ user }: { user: User | null }) => {
   return (
     <header className="app-header">
       <nav>
@@ -53,6 +68,16 @@ const Header = () => {
           </li>
         </ul>
       </nav>
+      {user && (
+        <div className="user-info">
+          <div className="user-name">{`Hi ${user.firstname} ${user.lastname}`}</div>
+          <Form id="logout-form" action="/logout" method="post">
+            <button type="submit" className="button button-dark">
+              Logout
+            </button>
+          </Form>
+        </div>
+      )}
     </header>
   )
 }

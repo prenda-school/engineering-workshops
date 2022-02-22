@@ -10,13 +10,14 @@ import {
 import PresentationForm from "~/components/presentation-form"
 import stylesUrl from "~/styles/presentation-id.css"
 import { createPresentation } from "~/utils/presentations.server"
-import { getUsers } from "~/utils/users.server"
+import { getUsers, requireUserId } from "~/utils/users.server"
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }]
 }
 
 export const action: ActionFunction = async ({ request }) => {
+  await requireUserId(request)
   const form = await request.formData()
   const title = form.get("title")
   const suggester = form.get("suggester")
@@ -40,7 +41,8 @@ export const action: ActionFunction = async ({ request }) => {
   return redirect(`/presentation/${presentation.id}`)
 }
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }) => {
+  await requireUserId(request)
   const users = await getUsers()
   return { users }
 }
