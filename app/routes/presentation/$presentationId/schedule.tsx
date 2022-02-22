@@ -1,57 +1,48 @@
-import { Schedule } from "@prisma/client"
-import {
-  ActionFunction,
-  LoaderFunction,
-  redirect,
-  useLoaderData,
-  useNavigate,
-  useParams,
-} from "remix"
-import { Modal } from "~/components/modal"
-import { ScheduleForm } from "~/components/schedule-form"
-import {
-  getScheduleForPresentation,
-  upsertScheduleForPresentation,
-} from "~/utils/schedules.server"
-import { requireUserId } from "~/utils/users.server"
+import { Form, useTransition } from "remix"
+import { Spinner } from "~/components/spinner"
 
-export const action: ActionFunction = async ({ request, params }) => {
-  const form = await request.formData()
-  const { presentationId } = params
-  const date = form.get("date")
-
-  if (typeof date !== "string") {
-    return { errors: "Form not submitted correctly." }
-  }
-
-  if (presentationId === undefined) {
-    throw new Error("missing route param `presentationId`")
-  }
-
-  const dateScheduled = new Date(date)
-  await upsertScheduleForPresentation(presentationId, dateScheduled)
-  return redirect(`/presentation/${presentationId}`)
-}
-
-export const loader: LoaderFunction = async ({ request, params }) => {
-  await requireUserId(request)
-  const { presentationId } = params as { presentationId: string }
-  const schedule = await getScheduleForPresentation(presentationId)
-  return schedule
-}
-
-export default function SchedulePresentationModal() {
-  const { presentationId } = useParams<{ presentationId: string }>()
-  const schedule = useLoaderData<Schedule>()
-  const navigate = useNavigate()
-  const dismiss = () => navigate(`/presentation/${presentationId}`)
-  const defaultDate = schedule?.dateScheduled
-    ? new Date(schedule.dateScheduled).toISOString().split("T")[0]
-    : undefined
+export const ScheduleForm = ({
+  defaultDate,
+  dismiss,
+}: {
+  defaultDate: string | undefined
+  dismiss: () => void
+}) => {
+  const transition = useTransition()
+  const busy = transition.state !== "idle"
   return (
-    <Modal>
-      <h3 style={{ textAlign: "center" }}>Schedule a date to present</h3>
-      <ScheduleForm defaultDate={defaultDate} dismiss={dismiss} />
-    </Modal>
+    <Form method="post">
+      <input type="date" name="date" defaultValue={defaultDate} />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <button className="button button-dark" type="submit">
+          {busy ? (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              <Spinner
+                color="var(--color-light-text)"
+                style={{ borderLeftColor: "#fff" }}
+              />{" "}
+              scheduling
+            </span>
+          ) : (
+            "schedule"
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={dismiss}
+          className="button button-light"
+          style={{ marginTop: 0 }}
+        >
+          Cancel
+        </button>
+      </div>
+    </Form>
   )
 }
