@@ -40,11 +40,10 @@ export default function App() {
         <Links />
       </head>
       <body>
-        {user && <Header user={user} />}
-        <div className={user ? "app-container" : ""}>
+        <Header user={user} />
+        <div className="app-container">
           <Outlet />
         </div>
-
         <ScrollRestoration />
         {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>
