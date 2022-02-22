@@ -71,6 +71,11 @@ const Header = ({ user }: { user: User | null }) => {
       {user && (
         <div className="user-info">
           <div className="user-name">{`Hi ${user.firstname} ${user.lastname}`}</div>
+          <Form id="logout-form" action="/logout" method="post">
+            <button type="submit" className="button button-dark">
+              Logout
+            </button>
+          </Form>
         </div>
       )}
     </header>
