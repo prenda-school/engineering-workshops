@@ -1,4 +1,4 @@
-import { LinksFunction, LoaderFunction, useLoaderData } from "remix"
+import { Link, LinksFunction, LoaderFunction, useLoaderData } from "remix"
 import stylesUrl from "~/styles/presentation.css"
 import { AugmentedPresentation } from "~/types"
 
@@ -33,7 +33,9 @@ export default function Presentation() {
         <tbody>
           {presentations.map((presentation) => (
             <tr key={presentation.id}>
-              <td>{presentation.title}</td>
+              <td>
+                <Link to={presentation.id}>{presentation.title}</Link>
+              </td>
               <td>
                 {presentation.suggester?.firstname}{" "}
                 {presentation.suggester?.lastname}
