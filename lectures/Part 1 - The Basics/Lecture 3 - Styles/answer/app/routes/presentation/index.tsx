@@ -8,7 +8,7 @@ export const links: LinksFunction = () => [
 export default function Presentation() {
   return (
     <div className="container">
-      <table>
+      <table className="presentation-table">
         <thead>
           <tr>
             <th>Topic</th>
