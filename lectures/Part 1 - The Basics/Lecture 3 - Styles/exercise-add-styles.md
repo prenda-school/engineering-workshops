@@ -6,7 +6,7 @@ Add styles to the `/presentation` route by bringing in the styles from `app/styl
 
 Hints:
 
-- Use `className="presentation-table"` on the table to add some styling to the table.
+- Add `className="presentation-table"` to the table to get some styling.
 
 ```typescript
 export function links(): LinkObject[]
