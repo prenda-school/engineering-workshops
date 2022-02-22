@@ -17,7 +17,7 @@ export default function Presentation() {
   const presentations = useLoaderData<AugmentedPresentation[]>()
   return (
     <div className="container">
-      <table>
+      <table className="presentation-table">
         <thead>
           <tr>
             <th>Topic</th>
