@@ -1,4 +1,4 @@
-import { LinksFunction, LoaderFunction, useLoaderData } from "remix"
+import { Link, LinksFunction, LoaderFunction, useLoaderData } from "remix"
 import stylesUrl from "~/styles/presentation.css"
 import { AugmentedPresentation } from "~/types"
 
@@ -17,6 +17,9 @@ export default function Presentation() {
   const presentations = useLoaderData<AugmentedPresentation[]>()
   return (
     <div className="container">
+      <Link to="new" className="button button-light create-topic-button">
+        Create New topic
+      </Link>
       <table className="presentation-table">
         <thead>
           <tr>
