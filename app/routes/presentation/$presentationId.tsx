@@ -1,4 +1,11 @@
-import { LinksFunction, LoaderFunction, Outlet, useLoaderData } from "remix"
+import {
+  Link,
+  LinksFunction,
+  LoaderFunction,
+  Outlet,
+  useCatch,
+  useLoaderData,
+} from "remix"
 import { requireUserId } from "~/utils/users.server"
 import stylesUrl from "~/styles/presentation-id.css"
 import { getPresentation } from "~/utils/presentations.server"
@@ -14,7 +21,17 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   // we can do this safely because presentationId must be defined for this route
   const { presentationId } = params as { presentationId: string }
 
-  return await getPresentation(presentationId)
+  const presentation = await getPresentation(presentationId)
+  if (presentation === null) {
+    throw new Response(
+      `Could not find a presentation for id ${presentationId}`,
+      {
+        status: 400,
+      }
+    )
+  }
+
+  return presentation
 }
 
 export default function PresentationId() {
@@ -26,4 +43,18 @@ export default function PresentationId() {
       <Outlet />
     </div>
   )
+}
+
+export function CatchBoundary() {
+  const caught = useCatch()
+
+  if (caught.status === 400) {
+    return (
+      <div className="container error-container">
+        <h2>{caught.data}</h2>
+        <Link to="/presentation">See all presentations</Link>
+      </div>
+    )
+  }
+  return <div className="container error-container"></div>
 }

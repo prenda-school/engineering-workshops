@@ -1,22 +1,24 @@
 import {
   Form,
+  Link,
   Links,
   LiveReload,
   LoaderFunction,
   Meta,
   Outlet,
+  Scripts,
   ScrollRestoration,
   useLoaderData,
 } from "remix"
 import type { MetaFunction, LinksFunction } from "remix"
-import globalStylesUrl from "./styles/global.css"
-import headerStylesUrl from "./styles/header.css"
+import globalStylesUrl from "~/styles/global.css"
+import headerStylesUrl from "~/styles/header.css"
 import { getUser } from "~/utils/users.server"
 import { User } from "@prisma/client"
 import { NavLink } from "react-router-dom"
 
 export const meta: MetaFunction = () => {
-  return { title: "Engineering Workshops" }
+  return { title: "New Remix App" }
 }
 
 export const links: LinksFunction = () => [
@@ -45,6 +47,7 @@ export default function App() {
           <Outlet />
         </div>
         <ScrollRestoration />
+        <Scripts />
         {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>
     </html>
@@ -79,5 +82,14 @@ const Header = ({ user }: { user: User | null }) => {
         </div>
       )}
     </header>
+  )
+}
+
+export function ErrorBoundary() {
+  return (
+    <div className="container error-container">
+      <h1>There was an error rendering the app.</h1>
+      <Link to="/">Go to home</Link>
+    </div>
   )
 }
