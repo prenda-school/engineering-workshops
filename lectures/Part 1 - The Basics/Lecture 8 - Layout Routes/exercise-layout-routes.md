@@ -1,6 +1,8 @@
 1. Add the `/presentation/$presentationId` route, (you can just copy from the lecture)
-2. Add the `/presentation/$presentationId/schedule` route (you can just copy from the lecture)
-3. Add the `/presentation/$presentationId/edit` route.
+2. Link to the `/presentation/$presentationId` route in name column of the table
+   from the `/presentation` route.
+3. Add the `/presentation/$presentationId/schedule` route (you can just copy from the lecture)
+4. Add the `/presentation/$presentationId/edit` route.
 
 Hints:
 
