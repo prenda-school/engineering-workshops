@@ -1,3 +1,10 @@
+import { LinksFunction } from "remix"
+import stylesUrl from "~/styles/presentation.css"
+
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: stylesUrl },
+]
+
 export default function Presentation() {
   return (
     <div className="container">
