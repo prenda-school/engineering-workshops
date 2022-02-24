@@ -6,7 +6,7 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix dev",
-    "postinstall": "remix setup node",
+    "postinstall": "prisma generate && prisma migrate deploy && remix setup node",
     "viewDb": "prisma studio",
     "seed": "rm -f ./prisma/dev.db && prisma db push && prisma db seed"
   },
