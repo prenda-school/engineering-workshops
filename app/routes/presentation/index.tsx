@@ -1,6 +1,5 @@
 import {
   ActionFunction,
-  Form,
   Link,
   LinksFunction,
   LoaderFunction,
@@ -70,7 +69,9 @@ export const loader: LoaderFunction = async ({ request }) => {
 export default function PresentationsTable() {
   const { presentations, user } =
     useLoaderData<{ user: User; presentations: AugmentedPresentation[] }>()
-  return (
+  const transition = useTransition()
+
+  return transition.state === "idle" ? (
     <div className="container">
       <Link to="new" className="button button-light create-topic-button">
         Create New topic
@@ -116,6 +117,10 @@ export default function PresentationsTable() {
         </tbody>
       </table>
     </div>
+  ) : (
+    <div className="container">
+      <Spinner />
+    </div>
   )
 }
 
@@ -127,12 +132,11 @@ const VoteButton = ({
   presentation: AugmentedPresentation
 }) => {
   const alreadyLikes = presentation.votes?.find((v) => v.userId === userId)
-  // const fetcher = useFetcher()
-  const transition = useTransition()
-  const isLiking = transition.state !== "idle"
-  // transition.submission?.formData.get("presentationId") === presentation.id
+  const fetcher = useFetcher()
+  const isLiking =
+    fetcher.submission?.formData.get("presentationId") === presentation.id
   return (
-    <Form method="post">
+    <fetcher.Form method="post">
       <input type="hidden" name="userId" value={userId} />
       <input type="hidden" name="presentationId" value={presentation.id} />
       {isLiking ? (
@@ -152,10 +156,10 @@ const VoteButton = ({
           type="submit"
           className="button button-light"
         >
-          {alreadyLikes ? "No longer interested" : "I'm Interested"}
+          {alreadyLikes ? "Unlike" : "Like"}
         </button>
       )}
-    </Form>
+    </fetcher.Form>
   )
 }
 

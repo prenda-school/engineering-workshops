@@ -30,7 +30,7 @@ html {
 }
 
 :focus {
-  outline: var(--color-links) solid 2px;
+  outline: var(--color-text-dark) solid 2px;
   outline-offset: 2px;
 }
 
@@ -45,11 +45,6 @@ body {
     #2967a6 35%,
     #0a4872 100%
   );
-}
-
-[data-light] {
-  color: var(--color-background);
-  background-color: var(--color-foreground);
 }
 
 body {
@@ -115,30 +110,8 @@ body {
   margin-top: var(--min-margin-size);
 }
 
-input {
-  outline: 0;
-  background: #f2f2f2;
-  width: 100%;
-  border: 0;
-  padding: 15px;
-  box-sizing: border-box;
-  font-size: 16px;
-}
-
-input[type="text"]:disabled {
-  cursor: disabled;
-}
-
-textarea {
-  outline: 0;
-  background: #f2f2f2;
-  width: 100%;
-  border: 0;
-  padding: 15px;
-  box-sizing: border-box;
-  font-size: 16px;
-}
-
+input,
+textarea,
 select {
   outline: 0;
   background: #f2f2f2;
@@ -147,6 +120,12 @@ select {
   padding: 15px;
   box-sizing: border-box;
   font-size: 16px;
+  box-shadow: var(--color-body-text) 0px 0px 5px -2px;
+  border-radius: 8px;
+}
+
+input[type="text"]:disabled {
+  cursor: disabled;
 }
 
 .modal-container {

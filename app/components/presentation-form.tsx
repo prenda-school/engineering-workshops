@@ -27,15 +27,14 @@ export default function PresentationForm({
   const transition = useTransition()
   const busy = transition.state !== "idle"
   return (
-    <Form method="post">
+    <Form method="post" id="presentation-form">
       <input
         type="hidden"
         name="presentationId"
         value={presentation?.id || "new"}
       />
       <label>
-        Topic:
-        <br />
+        <div>Topic:</div>
         <input
           type="text"
           id="title"
@@ -44,8 +43,7 @@ export default function PresentationForm({
         />
       </label>
       <label>
-        Suggester:
-        <br />
+        <div>Suggester:</div>
         <UserSelect
           users={users}
           name="suggester"

@@ -1,0 +1,8 @@
+#presentation-form {
+  display: flex;
+  flex-direction: column;
+}
+
+#presentation-form > label {
+  margin-top: 10px;
+}

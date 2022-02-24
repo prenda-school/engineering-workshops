@@ -1,6 +1,7 @@
 import { User } from "@prisma/client"
 import {
   ActionFunction,
+  LinksFunction,
   LoaderFunction,
   redirect,
   useLoaderData,
@@ -9,12 +10,16 @@ import {
 import { Modal } from "~/components/modal"
 import PresentationForm from "~/components/presentation-form"
 import { AugmentedPresentation } from "~/types"
-
+import styleUrl from "~/styles/presentation-form.css"
 import {
   getPresentation,
   updatePresentation,
 } from "~/utils/presentations.server"
 import { getUser, getUsers } from "~/utils/users.server"
+
+export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: styleUrl },
+]
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData()
@@ -53,7 +58,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     )
     return { user, users, presentation }
   }
-  redirect("/presentation")
+  return redirect("/presentation")
 }
 
 export default function EditPresentation() {

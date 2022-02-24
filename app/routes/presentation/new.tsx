@@ -10,11 +10,15 @@ import {
 import PresentationForm from "~/components/presentation-form"
 import { getUser, getUsers, requireUserId } from "~/utils/users.server"
 import stylesUrl from "~/styles/presentation-id.css"
+import formStylesUrl from "~/styles/presentation-form.css"
+
 import { createPresentation } from "~/utils/presentations.server"
-import { useUserContext } from "~/components/useUser"
 
 export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: stylesUrl }]
+  return [
+    { rel: "stylesheet", href: stylesUrl },
+    { rel: "stylesheet", href: formStylesUrl },
+  ]
 }
 
 export const action: ActionFunction = async ({ request }) => {

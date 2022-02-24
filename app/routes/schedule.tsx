@@ -82,7 +82,7 @@ export default function ScheduleTable() {
                   {presentation.presenter?.lastname}
                 </td>
                 <td>{presentation.notes}</td>
-                <td>{dateString}</td>
+                <td style={{ minWidth: 120 }}>{dateString}</td>
               </tr>
             )
           })}
