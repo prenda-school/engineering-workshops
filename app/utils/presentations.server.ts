@@ -1,3 +1,5 @@
+import { marked } from "marked"
+
 import { AugmentedPresentation } from "~/types"
 import { db } from "./db.server"
 
@@ -6,7 +8,7 @@ export const getPresentations = async (
   scheduled: boolean = false
 ): Promise<AugmentedPresentation[]> => {
   const findScheduled = scheduled ? "isNot" : "is"
-  const presentations = db.presentation.findMany({
+  const presentations = await db.presentation.findMany({
     where: { schedule: { [findScheduled]: null } },
     include: {
       suggester: {
@@ -35,13 +37,17 @@ export const getPresentations = async (
       },
     },
   })
-  return presentations
+
+  return presentations.map((p) => ({
+    ...p,
+    parsedMarkdown: marked(p.notes ?? ""),
+  }))
 }
 
 export const getPresentation = async (
   presentationId: string
-): Promise<AugmentedPresentation | null> =>
-  db.presentation.findUnique({
+): Promise<AugmentedPresentation | null> => {
+  const presentation = await db.presentation.findUnique({
     where: { id: presentationId },
     include: {
       suggester: {
@@ -70,6 +76,11 @@ export const getPresentation = async (
       },
     },
   })
+
+  return presentation
+    ? { ...presentation, parsedMarkdown: marked(presentation.notes ?? "") }
+    : null
+}
 
 export const createPresentation = async (
   title: string,

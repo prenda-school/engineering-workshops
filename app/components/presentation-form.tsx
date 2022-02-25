@@ -51,8 +51,7 @@ export default function PresentationForm({
         />
       </label>
       <label>
-        Presenter:
-        <br />
+        <div>Presenter:</div>
         <UserSelect
           users={users}
           name="presenter"
@@ -60,8 +59,9 @@ export default function PresentationForm({
         />
       </label>
       <label>
-        Notes:
-        <br />
+        <div>
+          Notes: <span style={{ opacity: 0.5 }}>(Markdown)</span>
+        </div>
         <textarea
           name="notes"
           defaultValue={presentation?.notes ?? undefined}

@@ -106,7 +106,11 @@ export default function PresentationsTable() {
                   {presentation.presenter?.firstname}{" "}
                   {presentation.presenter?.lastname}
                 </td>
-                <td>{presentation.notes}</td>
+                <td
+                  dangerouslySetInnerHTML={{
+                    __html: presentation.parsedMarkdown,
+                  }}
+                ></td>
                 <td>{presentation.votes.length}</td>
                 <td>
                   <VoteButton userId={user.id} presentation={presentation} />

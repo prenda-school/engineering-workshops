@@ -87,7 +87,11 @@ export default function ScheduleTable() {
                   {presentation.presenter?.firstname}{" "}
                   {presentation.presenter?.lastname}
                 </td>
-                <td>{presentation.notes}</td>
+                <td
+                  dangerouslySetInnerHTML={{
+                    __html: presentation.parsedMarkdown,
+                  }}
+                ></td>
                 <td style={{ minWidth: 120 }}>{dateString}</td>
               </tr>
             )

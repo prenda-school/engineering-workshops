@@ -17,4 +17,6 @@ export type AugmentedPresentation = Presentation & {
   schedule: {
     dateScheduled: Date
   } | null
+  /** html version of notes */
+  parsedMarkdown: string
 }

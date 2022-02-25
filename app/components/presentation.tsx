@@ -18,8 +18,8 @@ export const Presentation = ({
         {presentation.presenter?.lastname}
       </h3>
       <p style={{ margin: 0 }}>Description</p>
-      <hr style={{ margin: 0, borderColor: "var(--color-text-dark" }} />
-      <p>{presentation.notes}</p>
+      <hr style={{ margin: 0, borderColor: "var(--color-text-dark)" }} />
+      <p dangerouslySetInnerHTML={{ __html: presentation.parsedMarkdown }}></p>
       <div style={{ display: "flex", justifyContent: "space-evenly" }}>
         <Link
           className="button button-dark"
