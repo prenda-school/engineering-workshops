@@ -38,14 +38,20 @@ export const action: ActionFunction = async ({ request, params }) => {
 export const loader: LoaderFunction = async ({ request }) => {
   await requireUserId(request)
   const presentations = await getPresentations(true)
-  return {
-    presentations,
-  }
+  presentations.sort((a, b) => {
+    if (a.schedule && b.schedule) {
+      return a.schedule?.dateScheduled > b.schedule?.dateScheduled ? -1 : 1
+    } else if (a.schedule) {
+      return -1
+    } else {
+      return 1
+    }
+  })
+  return presentations
 }
 
 export default function ScheduleTable() {
-  const { presentations } =
-    useLoaderData<{ presentations: AugmentedPresentation[] }>()
+  const presentations = useLoaderData<AugmentedPresentation[]>()
   return (
     <div className="container">
       <table className="presentation-table">
