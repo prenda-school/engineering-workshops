@@ -13,6 +13,7 @@ const users = Array.from({ length: 5 }).map((u) => ({
 }))
 
 async function seed() {
+  if (process.env.NODE_ENV === "production") return
   const newUsers = await Promise.all(
     users.map((data) => prisma.user.create({ data }))
   )
