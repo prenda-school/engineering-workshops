@@ -19,7 +19,7 @@ import { User } from "@prisma/client"
 import { NavLink } from "react-router-dom"
 
 export const meta: MetaFunction = () => {
-  return { title: "New Remix App" }
+  return { title: "Workshops" }
 }
 
 export const links: LinksFunction = () => [
