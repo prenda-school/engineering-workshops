@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -32,16 +33,17 @@ model Votes {
 }
 
 model Presentation {
-  id          String    @id @default(uuid())
-  title       String
-  suggester   User?     @relation("suggester", fields: [suggesterId], references: [id])
-  suggesterId String?
-  presenter   User?     @relation("presenter", fields: [presenterId], references: [id])
-  presenterId String?
-  notes       String?
-  status      String?
-  votes       Votes[]   @relation("presentationVotes")
-  schedule    Schedule? @relation("presentationSchedule")
+  id             String    @id @default(uuid())
+  title          String
+  suggester      User?     @relation("suggester", fields: [suggesterId], references: [id])
+  suggesterId    String?
+  presenter      User?     @relation("presenter", fields: [presenterId], references: [id])
+  presenterId    String?
+  notes          String?
+  parsedMarkdown String?
+  status         String?
+  votes          Votes[]   @relation("presentationVotes")
+  schedule       Schedule? @relation("presentationSchedule")
 }
 
 model Schedule {

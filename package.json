@@ -6,9 +6,10 @@
   "scripts": {
     "build": "remix build",
     "dev": "remix dev",
-    "postinstall": "prisma generate && prisma migrate deploy && remix setup node",
+    "postinstall": "prisma generate && prisma migrate deploy && ts-node ./prisma/migrate.ts && remix setup node",
     "viewDb": "prisma studio",
-    "seed": "rm -f ./prisma/dev.db && prisma db push && prisma db seed"
+    "seed": "rm -f ./prisma/dev.db && prisma db push && prisma db seed",
+    "migrate": "ts-node ./prisma/migrate.ts"
   },
   "prisma": {
     "seed": "ts-node ./prisma/seed.ts"
