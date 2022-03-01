@@ -13,7 +13,7 @@ const { getSession, commitSession, destroySession } =
   createCookieSessionStorage({
     cookie: {
       name: "engineering-workshops-session",
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       secrets: [sessionSecret],
       sameSite: "lax",
       path: "/",

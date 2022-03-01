@@ -8,7 +8,7 @@ export const getPresentations = async (
   scheduled: boolean = false
 ): Promise<AugmentedPresentation[]> => {
   const findScheduled = scheduled ? "isNot" : "is"
-  const presentations = await db.presentation.findMany({
+  return db.presentation.findMany({
     where: { schedule: { [findScheduled]: null } },
     include: {
       suggester: {
@@ -37,17 +37,12 @@ export const getPresentations = async (
       },
     },
   })
-
-  return presentations.map((p) => ({
-    ...p,
-    parsedMarkdown: marked(p.notes ?? ""),
-  }))
 }
 
 export const getPresentation = async (
   presentationId: string
-): Promise<AugmentedPresentation | null> => {
-  const presentation = await db.presentation.findUnique({
+): Promise<AugmentedPresentation | null> =>
+  db.presentation.findUnique({
     where: { id: presentationId },
     include: {
       suggester: {
@@ -77,11 +72,6 @@ export const getPresentation = async (
     },
   })
 
-  return presentation
-    ? { ...presentation, parsedMarkdown: marked(presentation.notes ?? "") }
-    : null
-}
-
 export const createPresentation = async (
   title: string,
   suggesterId: string,
@@ -89,7 +79,13 @@ export const createPresentation = async (
   notes: string | null
 ) =>
   db.presentation.create({
-    data: { title, suggesterId, presenterId, notes },
+    data: {
+      title,
+      suggesterId,
+      presenterId,
+      notes,
+      parsedMarkdown: notes ? marked(notes) : null,
+    },
   })
 
 export const updatePresentation = async (
@@ -101,7 +97,13 @@ export const updatePresentation = async (
 ) =>
   db.presentation.update({
     where: { id },
-    data: { title, suggesterId, presenterId, notes },
+    data: {
+      title,
+      suggesterId,
+      presenterId,
+      notes,
+      parsedMarkdown: notes ? marked(notes) : null,
+    },
   })
 
 export const deletePresentation = async (presentationId: string) =>
