@@ -15,34 +15,32 @@ import {
   getPresentation,
   updatePresentation,
 } from "~/utils/presentations.server"
-import { getUser, getUsers } from "~/utils/users.server"
+import { getUser, getUsers, requireUserId } from "~/utils/users.server"
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styleUrl },
 ]
 
 export const action: ActionFunction = async ({ request }) => {
+  await requireUserId(request)
   const form = await request.formData()
-  const id = form.get("presentationId")
+  const presentationId = form.get("presentationId")
+  if (typeof presentationId !== "string") {
+    return { formError: "form submitted without a presentationId" }
+  }
   const title = form.get("title")
-  const suggesterId = form.get("suggester")
-  const presenterId = form.get("presenter")
+  const suggester = form.get("suggester")
+  const presenter = form.get("presenter")
   const notes = form.get("notes")
-  if (
-    typeof id !== "string" ||
-    typeof title !== "string" ||
-    typeof suggesterId !== "string" ||
-    typeof presenterId !== "string" ||
-    typeof notes !== "string"
-  ) {
-    return { formError: `Form not submitted correctly.` }
+  if (typeof title !== "string" || typeof suggester !== "string") {
+    return { formError: "Topic and Suggester are required fields." }
   }
   const presentation = await updatePresentation(
-    id,
+    presentationId,
     title,
-    suggesterId,
-    presenterId,
-    notes
+    suggester,
+    typeof presenter === "string" ? presenter : null,
+    typeof notes === "string" ? notes : null
   )
 
   return redirect(`/presentation/${presentation.id}`)

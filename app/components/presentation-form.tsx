@@ -1,5 +1,5 @@
 import { User } from "@prisma/client"
-import { Form, useTransition } from "remix"
+import { Form, useActionData, useTransition } from "remix"
 import { AugmentedPresentation } from "~/types"
 import { Spinner } from "./spinner"
 
@@ -24,6 +24,7 @@ export default function PresentationForm({
   users: User[]
   onDismiss: () => void
 }) {
+  const actionData = useActionData<{ formError: string }>()
   const transition = useTransition()
   const busy = transition.state !== "idle"
   return (
@@ -67,6 +68,13 @@ export default function PresentationForm({
           defaultValue={presentation?.notes ?? undefined}
         />
       </label>
+      <div id="form-error-message">
+        {actionData?.formError ? (
+          <p className="form-validation-error" role="alert">
+            {actionData?.formError}
+          </p>
+        ) : null}
+      </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button
           disabled={busy}
@@ -114,6 +122,7 @@ const UserSelect = ({
   HTMLSelectElement
 > & { users: User[] }) => (
   <select {...props}>
+    {props.name === "presenter" && <option value={undefined}></option>}
     {users.map((u) => (
       <option key={u.id} value={u.id}>
         {u.firstname} {u.lastname}

@@ -28,19 +28,14 @@ export const action: ActionFunction = async ({ request }) => {
   const suggester = form.get("suggester")
   const presenter = form.get("presenter")
   const notes = form.get("notes")
-  if (
-    typeof title !== "string" ||
-    typeof suggester !== "string" ||
-    typeof presenter !== "string" ||
-    typeof notes !== "string"
-  ) {
-    return { formError: `Form not submitted correctly.` }
+  if (typeof title !== "string" || typeof suggester !== "string") {
+    return { formError: "Topic and Suggester are required fields." }
   }
   const presentation = await createPresentation(
     title,
     suggester,
-    presenter,
-    notes
+    typeof presenter === "string" ? presenter : null,
+    typeof notes === "string" ? notes : null
   )
 
   return redirect(`/presentation/${presentation.id}`)

@@ -85,8 +85,8 @@ export const getPresentation = async (
 export const createPresentation = async (
   title: string,
   suggesterId: string,
-  presenterId: string,
-  notes: string
+  presenterId: string | null,
+  notes: string | null
 ) =>
   db.presentation.create({
     data: { title, suggesterId, presenterId, notes },
@@ -96,8 +96,8 @@ export const updatePresentation = async (
   id: string,
   title: string,
   suggesterId: string,
-  presenterId: string,
-  notes: string
+  presenterId: string | null,
+  notes: string | null
 ) =>
   db.presentation.update({
     where: { id },
