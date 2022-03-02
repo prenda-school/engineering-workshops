@@ -20,11 +20,11 @@
 
 .presentation-table th {
   position: sticky;
-  top: 0;
+  top: 60px; /*match the header height*/
   padding: 12px 10px;
   text-align: left;
-  background-color: var(--color-foreground);
-  color: var(--color-border);
+  background-color: #fff;
+  color: var(--color-prenda-blue);
 }
 
 .create-topic-button {
