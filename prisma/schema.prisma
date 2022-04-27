@@ -12,15 +12,14 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(uuid())
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  username     String         @unique
-  firstname    String
-  lastname     String
-  passwordHash String
-  suggestions  Presentation[] @relation("suggester")
-  presenter    Presentation[] @relation("presenter")
+  id          String         @id @default(uuid())
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  firstname   String
+  lastname    String
+  googleId    String?        @unique
+  suggestions Presentation[] @relation("suggester")
+  presenter   Presentation[] @relation("presenter")
 }
 
 model Votes {

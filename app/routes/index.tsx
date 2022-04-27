@@ -1,8 +1,11 @@
-import { LoaderFunction, redirect } from "remix"
-import { requireUserId } from "~/utils/users.server"
+import { LoaderFunction } from "remix"
+import { authenticator } from "~/utils/google_auth.server"
 
 export const loader: LoaderFunction = async ({ request }) => {
-  // requireUserId will handle redirect to /login if user is not authenticated
-  await requireUserId(request)
-  return redirect("/presentation")
+  // authenticator.isAuthenticated will handle redirect to /login if user is not authenticated
+  await authenticator.isAuthenticated(request, {
+    // @ts-ignore
+    successRedirect: "/presentation",
+    failureRedirect: "/login",
+  })
 }

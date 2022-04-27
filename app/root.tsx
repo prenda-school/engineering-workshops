@@ -14,9 +14,9 @@ import type { MetaFunction, LinksFunction } from "remix"
 import globalStylesUrl from "~/styles/global.css"
 import headerStylesUrl from "~/styles/header.css"
 import spinnerStylesUrl from "~/styles/spinner.css"
-import { getUser } from "~/utils/users.server"
 import { User } from "@prisma/client"
 import { NavLink } from "react-router-dom"
+import { authenticator } from "./utils/google_auth.server"
 
 export const meta: MetaFunction = () => {
   return { title: "Workshops" }
@@ -29,7 +29,7 @@ export const links: LinksFunction = () => [
 ]
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await getUser(request)
+  const user = await authenticator.isAuthenticated(request)
   return { user }
 }
 

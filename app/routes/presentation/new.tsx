@@ -8,11 +8,12 @@ import {
   useNavigate,
 } from "remix"
 import PresentationForm from "~/components/presentation-form"
-import { getUser, getUsers, requireUserId } from "~/utils/users.server"
+import { getUsers } from "~/utils/users.server"
 import stylesUrl from "~/styles/presentation-id.css"
 import formStylesUrl from "~/styles/presentation-form.css"
 
 import { createPresentation } from "~/utils/presentations.server"
+import { authenticator } from "~/utils/google_auth.server"
 
 export const links: LinksFunction = () => {
   return [
@@ -22,7 +23,9 @@ export const links: LinksFunction = () => {
 }
 
 export const action: ActionFunction = async ({ request }) => {
-  await requireUserId(request)
+  await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  })
   const form = await request.formData()
   const title = form.get("title")
   const suggester = form.get("suggester")
@@ -42,7 +45,9 @@ export const action: ActionFunction = async ({ request }) => {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await getUser(request, true)
+  const user = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  })
   const users = await getUsers()
   return { user, users }
 }

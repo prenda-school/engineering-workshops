@@ -8,8 +8,8 @@ import {
 import { db } from "~/utils/db.server"
 import stylesUrl from "~/styles/presentation.css"
 import { AugmentedPresentation } from "~/types"
-import { requireUserId } from "~/utils/users.server"
 import { getPresentations } from "~/utils/presentations.server"
+import { authenticator } from "~/utils/google_auth.server"
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }]
@@ -36,7 +36,9 @@ export const action: ActionFunction = async ({ request, params }) => {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  await requireUserId(request)
+  await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  })
   const presentations = await getPresentations(true)
   presentations.sort((a, b) => {
     if (a.schedule && b.schedule) {
@@ -89,7 +91,7 @@ export default function ScheduleTable() {
                 </td>
                 <td
                   dangerouslySetInnerHTML={{
-                    __html: presentation.parsedMarkdown,
+                    __html: presentation.parsedMarkdown ?? "",
                   }}
                 ></td>
                 <td style={{ minWidth: 120 }}>{dateString}</td>

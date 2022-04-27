@@ -1,52 +1,33 @@
-import { ActionFunction, Form, LinksFunction } from "remix"
-import { useActionData, Link, useSearchParams } from "remix"
-import { LoginActionData, LoginForm } from "~/components/login-form"
-import { createUserSession, login } from "~/utils/users.server"
+import { Form, json, LinksFunction, LoaderFunction, useLoaderData } from "remix"
+import { authenticator } from "~/utils/google_auth.server"
+import { sessionStorage } from "~/utils/users.server"
 import stylesUrl from "../styles/login.css"
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }]
 }
 
-export const action: ActionFunction = async ({
-  request,
-}): Promise<Response | LoginActionData> => {
-  const form = await request.formData()
-  const username = form.get("username")
-  const password = form.get("password")
-  const redirectTo = form.get("redirectTo") || "/"
-  if (
-    typeof username !== "string" ||
-    typeof password !== "string" ||
-    typeof redirectTo !== "string"
-  ) {
-    return { formError: `Form not submitted correctly.` }
-  }
-
-  const fields = { username, password }
-
-  const user = await login(username, password)
-  if (!user) {
-    return {
-      fields,
-      formError: "Username/Password combination is incorrect",
-    }
-  }
-  // if there is a user, create their session and redirect to /
-  return createUserSession(user.id, redirectTo)
+export const loader: LoaderFunction = async ({ request }) => {
+  await authenticator.isAuthenticated(request, {
+    successRedirect: "/presentation",
+  })
+  const session = await sessionStorage.getSession(request.headers.get("cookie"))
+  const error = session.get(authenticator.sessionErrorKey)
+  return json({ error })
 }
 
 export default function Login() {
-  const actionData = useActionData<LoginActionData>()
-  const [searchParams] = useSearchParams()
+  const { error } = useLoaderData()
   return (
     <div className="login-container">
       <div className="content">
         <h1>Login</h1>
-        <LoginForm actionData={actionData} searchParams={searchParams} />
-        <div>
-          Need an account? <Link to="/register">Register</Link>
-        </div>
+        <Form action="/auth/google" method="post">
+          {error && (
+            <h4 style={{ color: "var(--color-invalid)" }}>*{error.message}</h4>
+          )}
+          <button id="login-with-google-btn">Login With Google</button>
+        </Form>
       </div>
     </div>
   )

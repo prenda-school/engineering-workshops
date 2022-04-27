@@ -8,7 +8,6 @@ import {
   useTransition,
 } from "remix"
 import stylesUrl from "~/styles/presentation.css"
-import { getUser } from "~/utils/users.server"
 import { User } from "@prisma/client"
 import {
   deletePresentation,
@@ -17,6 +16,7 @@ import {
 import { AugmentedPresentation } from "~/types"
 import { likePresentation, unlikePresentation } from "~/utils/votes"
 import { Spinner } from "~/components/spinner"
+import { authenticator } from "~/utils/google_auth.server"
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }]
@@ -58,7 +58,9 @@ export const action: ActionFunction = async ({ request, params }) => {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await getUser(request, true)
+  const user = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  })
   const presentations: AugmentedPresentation[] = await getPresentations()
   return {
     user,
@@ -67,8 +69,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 }
 
 export default function PresentationsTable() {
-  const { presentations, user } =
-    useLoaderData<{ user: User; presentations: AugmentedPresentation[] }>()
+  const { presentations, user } = useLoaderData<{
+    user: User
+    presentations: AugmentedPresentation[]
+  }>()
   const transition = useTransition()
 
   return transition.state === "idle" ? (
@@ -108,7 +112,7 @@ export default function PresentationsTable() {
                 </td>
                 <td
                   dangerouslySetInnerHTML={{
-                    __html: presentation.parsedMarkdown,
+                    __html: presentation.parsedMarkdown ?? "",
                   }}
                 ></td>
                 <td>{presentation.votes.length}</td>

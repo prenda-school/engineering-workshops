@@ -1,4 +1,5 @@
 import { User } from "@prisma/client"
+import { useRef, useState } from "react"
 import { Form, useActionData, useTransition } from "remix"
 import { AugmentedPresentation } from "~/types"
 import { Spinner } from "./spinner"
@@ -27,6 +28,8 @@ export default function PresentationForm({
   const actionData = useActionData<{ formError: string }>()
   const transition = useTransition()
   const busy = transition.state !== "idle"
+  const ref = useRef<null | HTMLTextAreaElement>(null)
+  const [previewMarkdown, setPreviewMarkdown] = useState(false)
   return (
     <Form method="post" id="presentation-form">
       <input
@@ -64,6 +67,7 @@ export default function PresentationForm({
           Notes: <span style={{ opacity: 0.5 }}>(Markdown)</span>
         </div>
         <textarea
+          ref={ref}
           name="notes"
           defaultValue={presentation?.notes ?? undefined}
         />
@@ -108,6 +112,9 @@ export default function PresentationForm({
           className="button button-light"
         >
           Cancel
+        </button>
+        <button type="button" onClick={() => setPreviewMarkdown((pm) => !pm)}>
+          Preview
         </button>
       </div>
     </Form>

@@ -15,14 +15,17 @@ import {
   getPresentation,
   updatePresentation,
 } from "~/utils/presentations.server"
-import { getUser, getUsers, requireUserId } from "~/utils/users.server"
+import { getUsers } from "~/utils/users.server"
+import { authenticator } from "~/utils/google_auth.server"
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styleUrl },
 ]
 
 export const action: ActionFunction = async ({ request }) => {
-  await requireUserId(request)
+  await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  })
   const form = await request.formData()
   const presentationId = form.get("presentationId")
   if (typeof presentationId !== "string") {
@@ -47,7 +50,9 @@ export const action: ActionFunction = async ({ request }) => {
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  const user = await getUser(request, true)
+  const user = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  })
   const users = await getUsers()
   const { presentationId } = params
   if (presentationId !== undefined) {

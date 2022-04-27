@@ -9,11 +9,11 @@ import {
 } from "remix"
 import { Modal } from "~/components/modal"
 import { ScheduleForm } from "~/components/schedule-form"
+import { authenticator } from "~/utils/google_auth.server"
 import {
   getScheduleForPresentation,
   upsertScheduleForPresentation,
 } from "~/utils/schedules.server"
-import { requireUserId } from "~/utils/users.server"
 
 export const action: ActionFunction = async ({ request, params }) => {
   const form = await request.formData()
@@ -34,7 +34,9 @@ export const action: ActionFunction = async ({ request, params }) => {
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  // await requireUserId(request)
+  await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  })
   const { presentationId } = params as { presentationId: string }
   const schedule = await getScheduleForPresentation(presentationId)
   return schedule
