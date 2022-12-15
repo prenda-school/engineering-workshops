@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb"
 
-export type PresentationUser = {
+export type TPresentationUser = {
   _id: ObjectId
   firstname: string
   lastname: string
@@ -8,7 +8,7 @@ export type PresentationUser = {
 
 export type SerializedPresentationUser = {
   _id: string
-} & Omit<PresentationUser, "_id">
+} & Omit<TPresentationUser, "_id">
 
 export type TUserDoc = {
   _id: ObjectId
@@ -21,8 +21,8 @@ export type TUserDoc = {
 
 export type TPresentationDoc = {
   _id: ObjectId
-  suggester?: PresentationUser
-  presenter?: PresentationUser
+  suggester?: TPresentationUser
+  presenter?: TPresentationUser
   title: string
   notes: string | null
   parsedMarkdown: string | null

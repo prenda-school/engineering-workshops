@@ -1,13 +1,11 @@
 import { ObjectId } from "mongodb"
-import MongoDB from "./db.server"
+import { Presentations } from "./db.server"
 
 export const likePresentation = async (
   userId: string,
   presentationId: string
 ) => {
-  const { Presentations } = await MongoDB
-
-  Presentations.updateOne(
+  await Presentations.updateOne(
     {
       _id: new ObjectId(presentationId),
     },
@@ -23,8 +21,7 @@ export const unlikePresentation = async (
   userId: string,
   presentationId: string
 ) => {
-  const { Presentations } = await MongoDB
-  Presentations.updateOne(
+  await Presentations.updateOne(
     {
       _id: new ObjectId(presentationId),
     },

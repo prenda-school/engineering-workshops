@@ -1,10 +1,9 @@
 import { ObjectId } from "mongodb"
-import MongoDB from "./db.server"
+import { Presentations } from "./db.server"
 
 export const getScheduleForPresentation = async (
   presentationId: string
 ): Promise<Date | null> => {
-  const { Presentations } = await MongoDB
   const presentation = await Presentations.findOne({
     _id: new ObjectId(presentationId),
   })
@@ -15,7 +14,6 @@ export const upsertScheduleForPresentation = async (
   presentationId: string,
   dateScheduled: Date
 ) => {
-  const { Presentations } = await MongoDB
   Presentations.updateOne(
     {
       _id: new ObjectId(presentationId),

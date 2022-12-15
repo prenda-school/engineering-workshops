@@ -39,8 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
     typeof presenter === "string" ? presenter : null,
     typeof notes === "string" ? notes : null
   )
-
-  return redirect(`/presentation/${presentation.id}`)
+  return redirect(`/presentation/${presentation.toString()}`)
 }
 
 export const loader: LoaderFunction = async ({ request }) => {

@@ -136,39 +136,24 @@ const VoteButton = ({
   userId: string
   presentation: TSerializedPresentationDoc
 }) => {
-  const alreadyLikes = presentation.votes?.find((v) => v.toString() === userId)
+  let alreadyLikes = !!presentation.votes?.find((v) => v === userId)
   const fetcher = useFetcher()
   const isLiking =
-    fetcher.submission?.formData.get("presentationId") ===
-    presentation._id.toString()
+    fetcher.submission?.formData.get("presentationId") === presentation._id
+  alreadyLikes = isLiking ? !alreadyLikes : alreadyLikes
   return (
     <fetcher.Form method="post">
       <input type="hidden" name="userId" value={userId} />
-      <input
-        type="hidden"
-        name="presentationId"
-        value={presentation._id.toString()}
-      />
-      {isLiking ? (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Spinner />
-        </div>
-      ) : (
-        <button
-          name="actionType"
-          value={alreadyLikes ? "unlike" : "like"}
-          type="submit"
-          className="button button-light"
-        >
-          {alreadyLikes ? "Unlike" : "Like"}
-        </button>
-      )}
+      <input type="hidden" name="presentationId" value={presentation._id} />
+
+      <button
+        name="actionType"
+        value={alreadyLikes ? "unlike" : "like"}
+        type="submit"
+        className="button button-light"
+      >
+        {alreadyLikes ? "Unlike" : "Like"}
+      </button>
     </fetcher.Form>
   )
 }
