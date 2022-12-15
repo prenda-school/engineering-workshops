@@ -5,6 +5,7 @@ export const likePresentation = async (
   userId: string,
   presentationId: string
 ) => {
+  console.log({ userId, presentationId })
   await Presentations.updateOne(
     {
       _id: new ObjectId(presentationId),
