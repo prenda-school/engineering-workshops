@@ -13,7 +13,7 @@ import {
 import { likePresentation, unlikePresentation } from "~/utils/votes"
 import { Spinner } from "~/components/spinner"
 import { authenticator } from "~/utils/google_auth.server"
-import { TPresentationDoc, TSerializedPresentationDoc, TUserDoc } from "~/types"
+import { TSerializedPresentationDoc, TUserDoc } from "~/types"
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }]
