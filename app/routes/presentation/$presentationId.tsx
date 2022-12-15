@@ -1,16 +1,10 @@
-import {
-  Link,
-  LinksFunction,
-  LoaderFunction,
-  Outlet,
-  useCatch,
-  useLoaderData,
-} from "remix"
+import { LinksFunction, LoaderFunction } from "@remix-run/node"
+import { Link, Outlet, useCatch, useLoaderData } from "@remix-run/react"
 import stylesUrl from "~/styles/presentation-id.css"
 import { getPresentation } from "~/utils/presentations.server"
-import { AugmentedPresentation } from "~/types"
 import { Presentation } from "~/components/presentation"
 import { authenticator } from "~/utils/google_auth.server"
+import { TSerializedPresentationDoc } from "~/types"
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }]
@@ -37,7 +31,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 }
 
 export default function PresentationId() {
-  const presentation = useLoaderData<AugmentedPresentation>()
+  const presentation = useLoaderData<TSerializedPresentationDoc>()
 
   return (
     <div>

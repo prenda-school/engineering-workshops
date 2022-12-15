@@ -1,12 +1,5 @@
-import { Schedule } from "@prisma/client"
-import {
-  ActionFunction,
-  LoaderFunction,
-  redirect,
-  useLoaderData,
-  useNavigate,
-  useParams,
-} from "remix"
+import { ActionFunction, LoaderFunction, redirect } from "@remix-run/node"
+import { useLoaderData, useNavigate, useParams } from "@remix-run/react"
 import { Modal } from "~/components/modal"
 import { ScheduleForm } from "~/components/schedule-form"
 import { authenticator } from "~/utils/google_auth.server"
@@ -44,11 +37,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export default function SchedulePresentationModal() {
   const { presentationId } = useParams<{ presentationId: string }>()
-  const schedule = useLoaderData<Schedule>()
+  const schedule = useLoaderData<string | null | undefined>()
   const navigate = useNavigate()
   const dismiss = () => navigate(`/presentation/${presentationId}`)
-  const defaultDate = schedule?.dateScheduled
-    ? new Date(schedule.dateScheduled).toISOString().split("T")[0]
+  const defaultDate = schedule
+    ? new Date(schedule).toISOString().split("T")[0]
     : undefined
   return (
     <Modal>

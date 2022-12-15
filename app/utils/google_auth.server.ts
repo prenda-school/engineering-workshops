@@ -1,9 +1,9 @@
-import { User } from "@prisma/client"
 import { Authenticator } from "remix-auth"
 import { GoogleStrategy } from "remix-auth-google"
+import { TUserDoc } from "~/types"
 import { findOrCreateUser, sessionStorage } from "./users.server"
 
-export const authenticator = new Authenticator<User>(sessionStorage)
+export const authenticator = new Authenticator<TUserDoc>(sessionStorage)
 
 const host =
   process.env.NODE_ENV === "production"

@@ -1,4 +1,5 @@
-import { Form, json, LinksFunction, LoaderFunction, useLoaderData } from "remix"
+import { Form, useLoaderData } from "@remix-run/react"
+import { json, LinksFunction, LoaderFunction } from "@remix-run/node"
 import { authenticator } from "~/utils/google_auth.server"
 import { sessionStorage } from "~/utils/users.server"
 import stylesUrl from "../styles/login.css"

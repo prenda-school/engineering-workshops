@@ -1,18 +1,37 @@
-import { db } from "./db.server"
+import { ObjectId } from "mongodb"
+import MongoDB from "./db.server"
 
 export const likePresentation = async (
   userId: string,
   presentationId: string
-) =>
-  db.votes.upsert({
-    where: { userId_presentationId: { presentationId, userId } },
-    update: {},
-    create: { presentationId, userId },
-  })
+) => {
+  const { Presentations } = await MongoDB
+
+  Presentations.updateOne(
+    {
+      _id: new ObjectId(presentationId),
+    },
+    {
+      $addToSet: {
+        votes: new ObjectId(userId),
+      },
+    }
+  )
+}
+
 export const unlikePresentation = async (
   userId: string,
   presentationId: string
-) =>
-  db.votes.delete({
-    where: { userId_presentationId: { userId, presentationId } },
-  })
+) => {
+  const { Presentations } = await MongoDB
+  Presentations.updateOne(
+    {
+      _id: new ObjectId(presentationId),
+    },
+    {
+      $pull: {
+        votes: new ObjectId(userId),
+      },
+    }
+  )
+}

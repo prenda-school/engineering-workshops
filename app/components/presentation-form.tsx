@@ -1,8 +1,7 @@
-import { User } from "@prisma/client"
 import { useRef, useState } from "react"
-import { Form, useActionData, useTransition } from "remix"
-import { AugmentedPresentation } from "~/types"
+import { Form, useActionData, useTransition } from "@remix-run/react"
 import { Spinner } from "./spinner"
+import { TSerializedPresentationDoc, TSerializedUserDoc } from "~/types"
 
 /**
  * will post to route of consuming component with form values:
@@ -20,9 +19,9 @@ export default function PresentationForm({
   users,
   onDismiss,
 }: {
-  presentation?: AugmentedPresentation
-  user: User
-  users: User[]
+  presentation?: TSerializedPresentationDoc
+  user: TSerializedUserDoc
+  users: TSerializedUserDoc[]
   onDismiss: () => void
 }) {
   const actionData = useActionData<{ formError: string }>()
@@ -35,7 +34,7 @@ export default function PresentationForm({
       <input
         type="hidden"
         name="presentationId"
-        value={presentation?.id || "new"}
+        value={presentation?._id || "new"}
       />
       <label>
         <div>Topic:</div>
@@ -51,7 +50,7 @@ export default function PresentationForm({
         <UserSelect
           users={users}
           name="suggester"
-          defaultValue={presentation?.suggesterId || user.id}
+          defaultValue={presentation?.suggester?._id || user._id}
         />
       </label>
       <label>
@@ -59,7 +58,7 @@ export default function PresentationForm({
         <UserSelect
           users={users}
           name="presenter"
-          defaultValue={presentation?.presenterId || user.id}
+          defaultValue={presentation?.presenter?._id || user._id}
         />
       </label>
       <label>
@@ -127,11 +126,11 @@ const UserSelect = ({
 }: React.DetailedHTMLProps<
   React.SelectHTMLAttributes<HTMLSelectElement>,
   HTMLSelectElement
-> & { users: User[] }) => (
+> & { users: TSerializedUserDoc[] }) => (
   <select {...props}>
     {props.name === "presenter" && <option value={undefined}></option>}
     {users.map((u) => (
-      <option key={u.id} value={u.id}>
+      <option key={u._id} value={u._id}>
         {u.firstname} {u.lastname}
       </option>
     ))}

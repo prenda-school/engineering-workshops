@@ -1,4 +1,4 @@
-import { Form, useTransition } from "remix"
+import { Form, useTransition } from "@remix-run/react"
 import { Spinner } from "./spinner"
 
 export const ScheduleForm = ({

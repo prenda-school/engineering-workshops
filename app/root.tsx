@@ -3,20 +3,23 @@ import {
   Link,
   Links,
   LiveReload,
-  LoaderFunction,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useLoaderData,
-} from "remix"
-import type { MetaFunction, LinksFunction } from "remix"
+} from "@remix-run/react"
+import type {
+  LoaderFunction,
+  MetaFunction,
+  LinksFunction,
+} from "@remix-run/node"
 import globalStylesUrl from "~/styles/global.css"
 import headerStylesUrl from "~/styles/header.css"
 import spinnerStylesUrl from "~/styles/spinner.css"
-import { User } from "@prisma/client"
 import { NavLink } from "react-router-dom"
 import { authenticator } from "./utils/google_auth.server"
+import { TUserDoc } from "~/types"
 
 export const meta: MetaFunction = () => {
   return { title: "Workshops" }
@@ -34,7 +37,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 }
 
 export default function App() {
-  const { user } = useLoaderData<{ user: User | null }>()
+  const { user } = useLoaderData<{ user: TUserDoc | null }>()
   return (
     <html lang="en">
       <head>
@@ -44,6 +47,7 @@ export default function App() {
         <Links />
       </head>
       <body>
+        {/* @ts-expect-error */}
         <Header user={user} />
         <div className="app-container">
           <Outlet />
@@ -56,7 +60,7 @@ export default function App() {
   )
 }
 
-const Header = ({ user }: { user: User | null }) => {
+const Header = ({ user }: { user: TUserDoc | null }) => {
   return (
     <header className="app-header">
       <nav>

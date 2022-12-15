@@ -1,5 +1,7 @@
-import { db } from "./db.server"
-import { createCookieSessionStorage, redirect } from "@remix-run/server-runtime"
+import MongoDB from "./db.server"
+import { createCookieSessionStorage, redirect } from "@remix-run/node"
+import { OptionalUnlessRequiredId } from "mongodb"
+import { TUserDoc } from "~/types"
 
 const sessionSecret = process.env.SESSION_SECRET
 if (!sessionSecret) {
@@ -25,16 +27,24 @@ export const findOrCreateUser = async (
   googleId: string,
   firstname: string,
   lastname: string
-) => {
-  const user = await db.user.findFirst({
-    where: { googleId },
-  })
-  return (
-    user ||
-    db.user.create({
-      data: { googleId, firstname, lastname },
-    })
-  )
+): Promise<TUserDoc> => {
+  const { Users } = await MongoDB
+  const user = await Users.findOne({ googleId })
+  if (user) return user
+
+  const newUser = {
+    googleId,
+    firstname,
+    lastname,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  } as OptionalUnlessRequiredId<TUserDoc>
+
+  const { insertedId } = await Users.insertOne(newUser)
+  return {
+    ...newUser,
+    _id: insertedId,
+  }
 }
 
 // Use the session functions to create a session
@@ -51,6 +61,7 @@ export const createUserSession = async (userId: string, redirectTo: string) => {
 }
 
 //--------helper functions to wrap database requests to get user/s -----------//
-export async function getUsers() {
-  return db.user.findMany()
+export async function getUsers(): Promise<TUserDoc[]> {
+  const { Users } = await MongoDB
+  return Users.find({}).toArray()
 }

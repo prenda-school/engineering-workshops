@@ -1,38 +1,12 @@
-import {
-  ActionFunction,
-  Link,
-  LinksFunction,
-  LoaderFunction,
-  useLoaderData,
-} from "remix"
-import { db } from "~/utils/db.server"
+import { LinksFunction, LoaderFunction } from "@remix-run/node"
+import { Link, useLoaderData } from "@remix-run/react"
 import stylesUrl from "~/styles/presentation.css"
-import { AugmentedPresentation } from "~/types"
 import { getPresentations } from "~/utils/presentations.server"
 import { authenticator } from "~/utils/google_auth.server"
+import { TSerializedPresentationDoc } from "~/types"
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }]
-}
-
-export const action: ActionFunction = async ({ request, params }) => {
-  const formData = await request.formData()
-  const userId = formData.get("userId")
-  const presentationId = formData.get("presentationId")
-  const actionType = formData.get("actionType")
-
-  if (typeof userId !== "string") return { error: "malformed userid" }
-  if (typeof presentationId !== "string")
-    return { error: "malformed presentationId" }
-
-  if (actionType === "create") {
-    await db.votes.create({ data: { userId, presentationId } })
-  } else {
-    await db.votes.delete({
-      where: { userId_presentationId: { userId, presentationId } },
-    })
-  }
-  return { success: true }
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -41,9 +15,9 @@ export const loader: LoaderFunction = async ({ request }) => {
   })
   const presentations = await getPresentations(true)
   presentations.sort((a, b) => {
-    if (a.schedule && b.schedule) {
-      return a.schedule?.dateScheduled > b.schedule?.dateScheduled ? -1 : 1
-    } else if (a.schedule) {
+    if (a.dateScheduled && b.dateScheduled) {
+      return a.dateScheduled > b.dateScheduled ? -1 : 1
+    } else if (a.dateScheduled) {
       return -1
     } else {
       return 1
@@ -53,7 +27,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 }
 
 export default function ScheduleTable() {
-  const presentations = useLoaderData<AugmentedPresentation[]>()
+  const presentations = useLoaderData<TSerializedPresentationDoc[]>()
   return (
     <div className="container">
       <table className="presentation-table">
@@ -68,16 +42,16 @@ export default function ScheduleTable() {
         </thead>
         <tbody>
           {presentations.map((presentation) => {
-            const date = presentation.schedule?.dateScheduled
-              ? new Date(presentation.schedule?.dateScheduled)
+            const date = presentation.dateScheduled
+              ? new Date(presentation.dateScheduled)
               : null
             const dateString = date
               ? date.toUTCString().split(" ").slice(1, 4).join(" ")
               : null
             return (
-              <tr key={presentation.id}>
+              <tr key={presentation._id}>
                 <td>
-                  <Link to={`/presentation/${presentation.id}`}>
+                  <Link to={`/presentation/${presentation._id}`}>
                     {presentation.title}
                   </Link>
                 </td>

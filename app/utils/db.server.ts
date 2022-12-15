@@ -1,19 +1,20 @@
-import { PrismaClient } from "@prisma/client"
+import { MongoClient } from "mongodb"
+import { TPresentationDoc, TUserDoc } from "~/types"
 
-let db: PrismaClient
+const { MONGODB_URI, MONGODB_DATABASE } = process.env
+if (!MONGODB_DATABASE || !MONGODB_URI)
+  throw new Error("MONGODB_URI or MONGODB_DATABASE is not defined")
 
-declare global {
-  var __db: PrismaClient | undefined
-}
+const client = new MongoClient(MONGODB_URI)
 
-if (process.env.NODE_ENV === "production") {
-  db = new PrismaClient()
-  db.$connect()
-} else {
-  if (!global.__db) {
-    global.__db = new PrismaClient()
-    global.__db.$connect()
+const setUpDb = async () => {
+  await client.connect()
+  console.info("Connected to MongoDB")
+  const db = client.db(process.env.MONGODB_DATABASE)
+  return {
+    Users: db.collection<TUserDoc>("users"),
+    Presentations: db.collection<TPresentationDoc>("presentations"),
   }
-  db = global.__db
 }
-export { db }
+
+export default setUpDb()

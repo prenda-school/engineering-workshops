@@ -1,12 +1,10 @@
-import { User } from "@prisma/client"
 import {
   ActionFunction,
   LinksFunction,
   LoaderFunction,
   redirect,
-  useLoaderData,
-  useNavigate,
-} from "remix"
+} from "@remix-run/node"
+import { useLoaderData, useNavigate } from "@remix-run/react"
 import PresentationForm from "~/components/presentation-form"
 import { getUsers } from "~/utils/users.server"
 import stylesUrl from "~/styles/presentation-id.css"
@@ -14,6 +12,7 @@ import formStylesUrl from "~/styles/presentation-form.css"
 
 import { createPresentation } from "~/utils/presentations.server"
 import { authenticator } from "~/utils/google_auth.server"
+import { TSerializedUserDoc } from "~/types"
 
 export const links: LinksFunction = () => {
   return [
@@ -53,7 +52,10 @@ export const loader: LoaderFunction = async ({ request }) => {
 }
 
 const NewPresentation = () => {
-  const { user, users } = useLoaderData<{ user: User; users: User[] }>()
+  const { user, users } = useLoaderData<{
+    user: TSerializedUserDoc
+    users: TSerializedUserDoc[]
+  }>()
   const navigate = useNavigate()
   const dismiss = () => navigate("/presentation")
   return (

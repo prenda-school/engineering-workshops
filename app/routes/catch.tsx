@@ -1,4 +1,4 @@
-import { useCatch } from "remix"
+import { useCatch } from "@remix-run/react"
 
 export const loader = async () => {
   // any status code can be thrown, but tradition dicates you use a 4xx code.

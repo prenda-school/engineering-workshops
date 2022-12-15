@@ -1,22 +1,19 @@
+import { ActionFunction, LinksFunction, LoaderFunction } from "@remix-run/node"
 import {
-  ActionFunction,
   Link,
-  LinksFunction,
-  LoaderFunction,
   useFetcher,
   useLoaderData,
   useTransition,
-} from "remix"
+} from "@remix-run/react"
 import stylesUrl from "~/styles/presentation.css"
-import { User } from "@prisma/client"
 import {
   deletePresentation,
   getPresentations,
 } from "~/utils/presentations.server"
-import { AugmentedPresentation } from "~/types"
 import { likePresentation, unlikePresentation } from "~/utils/votes"
 import { Spinner } from "~/components/spinner"
 import { authenticator } from "~/utils/google_auth.server"
+import { TPresentationDoc, TSerializedPresentationDoc, TUserDoc } from "~/types"
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }]
@@ -61,7 +58,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const user = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   })
-  const presentations: AugmentedPresentation[] = await getPresentations()
+  const presentations = await getPresentations()
   return {
     user,
     presentations,
@@ -70,8 +67,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function PresentationsTable() {
   const { presentations, user } = useLoaderData<{
-    user: User
-    presentations: AugmentedPresentation[]
+    user: TUserDoc
+    presentations: TSerializedPresentationDoc[]
   }>()
   const transition = useTransition()
 
@@ -95,12 +92,12 @@ export default function PresentationsTable() {
         <tbody>
           {presentations.map((presentation) => {
             return (
-              <tr key={presentation.id}>
+              <tr key={presentation._id}>
                 <td>
-                  <DeleteButton presentationId={presentation.id} />
+                  <DeleteButton presentationId={presentation._id} />
                 </td>
                 <td>
-                  <Link to={presentation.id}>{presentation.title}</Link>
+                  <Link to={presentation._id}>{presentation.title}</Link>
                 </td>
                 <td>
                   {presentation.suggester?.firstname}{" "}
@@ -117,7 +114,7 @@ export default function PresentationsTable() {
                 ></td>
                 <td>{presentation.votes.length}</td>
                 <td>
-                  <VoteButton userId={user.id} presentation={presentation} />
+                  <VoteButton userId={user._id} presentation={presentation} />
                 </td>
               </tr>
             )
@@ -137,16 +134,21 @@ const VoteButton = ({
   presentation,
 }: {
   userId: string
-  presentation: AugmentedPresentation
+  presentation: TSerializedPresentationDoc
 }) => {
-  const alreadyLikes = presentation.votes?.find((v) => v.userId === userId)
+  const alreadyLikes = presentation.votes?.find((v) => v.toString() === userId)
   const fetcher = useFetcher()
   const isLiking =
-    fetcher.submission?.formData.get("presentationId") === presentation.id
+    fetcher.submission?.formData.get("presentationId") ===
+    presentation._id.toString()
   return (
     <fetcher.Form method="post">
       <input type="hidden" name="userId" value={userId} />
-      <input type="hidden" name="presentationId" value={presentation.id} />
+      <input
+        type="hidden"
+        name="presentationId"
+        value={presentation._id.toString()}
+      />
       {isLiking ? (
         <div
           style={{

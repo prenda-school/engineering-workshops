@@ -1,10 +1,10 @@
-import { Link } from "remix"
-import { AugmentedPresentation } from "~/types"
+import { Link } from "@remix-run/react"
+import { TSerializedPresentationDoc } from "~/types"
 
 export const Presentation = ({
   presentation,
 }: {
-  presentation: AugmentedPresentation
+  presentation: TSerializedPresentationDoc
 }) => {
   return (
     <div id="presentation-id" className="container">
@@ -19,7 +19,9 @@ export const Presentation = ({
       </h3>
       <p style={{ margin: 0 }}>Description</p>
       <hr style={{ margin: 0, borderColor: "var(--color-text-dark)" }} />
-      <p dangerouslySetInnerHTML={{ __html: presentation.parsedMarkdown }}></p>
+      <p
+        dangerouslySetInnerHTML={{ __html: presentation.parsedMarkdown ?? "" }}
+      ></p>
       <div style={{ display: "flex", justifyContent: "space-evenly" }}>
         <Link
           className="button button-dark"

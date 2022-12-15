@@ -1,15 +1,12 @@
-import { User } from "@prisma/client"
 import {
   ActionFunction,
   LinksFunction,
   LoaderFunction,
   redirect,
-  useLoaderData,
-  useNavigate,
-} from "remix"
+} from "@remix-run/node"
+import { useLoaderData, useNavigate } from "@remix-run/react"
 import { Modal } from "~/components/modal"
 import PresentationForm from "~/components/presentation-form"
-import { AugmentedPresentation } from "~/types"
 import styleUrl from "~/styles/presentation-form.css"
 import {
   getPresentation,
@@ -17,6 +14,7 @@ import {
 } from "~/utils/presentations.server"
 import { getUsers } from "~/utils/users.server"
 import { authenticator } from "~/utils/google_auth.server"
+import { TSerializedPresentationDoc, TSerializedUserDoc } from "~/types"
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styleUrl },
@@ -46,7 +44,7 @@ export const action: ActionFunction = async ({ request }) => {
     typeof notes === "string" ? notes : null
   )
 
-  return redirect(`/presentation/${presentation.id}`)
+  return redirect(`/presentation/${presentation}`)
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -56,22 +54,23 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const users = await getUsers()
   const { presentationId } = params
   if (presentationId !== undefined) {
-    const presentation: AugmentedPresentation | null = await getPresentation(
-      presentationId
-    )
+    const presentation = await getPresentation(presentationId)
     return { user, users, presentation }
   }
   return redirect("/presentation")
 }
 
 export default function EditPresentation() {
-  const { user, users, presentation } = useLoaderData<{
-    user: User
-    users: User[]
-    presentation: AugmentedPresentation
+  const loaderData = useLoaderData<{
+    user: TSerializedUserDoc
+    users: TSerializedUserDoc[]
+    presentation: TSerializedPresentationDoc
   }>()
+  const { user, presentation } = loaderData
   const navigate = useNavigate()
-  const dismiss = () => navigate(`/presentation/${presentation.id}`)
+  const dismiss = () => navigate(`/presentation/${presentation._id}`)
+  if (!user) return null
+  const users = loaderData.users ?? []
   return (
     <Modal>
       <PresentationForm
