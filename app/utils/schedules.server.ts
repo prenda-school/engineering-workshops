@@ -14,7 +14,7 @@ export const upsertScheduleForPresentation = async (
   presentationId: string,
   dateScheduled: Date
 ) => {
-  Presentations.updateOne(
+  await Presentations.updateOne(
     {
       _id: new ObjectId(presentationId),
     },
