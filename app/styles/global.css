@@ -97,6 +97,11 @@ body {
   color: var(--color-text-light);
 }
 
+.button-error {
+  background-color: var(--color-invalid);
+  color: var(--color-text-light);
+}
+
 .container {
   background: #fff;
   display: flex;
