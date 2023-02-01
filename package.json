@@ -5,9 +5,7 @@
   "license": "",
   "scripts": {
     "build": "remix build",
-    "dev": "remix dev",
-    "seed": "",
-    "movetomongo": "ts-node ./movetomongo.ts"
+    "dev": "remix dev"
   },
   "dependencies": {
     "@remix-run/node": "^1.8.2",
